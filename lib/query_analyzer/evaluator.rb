@@ -89,17 +89,17 @@ class Evaluator
     return cl.db(dbname)
   end
 
-  def getColl(namespace)
+  def get_coll(namespace)
     db_name, collection_name = namespace.split('.',2)
     db = getDb(db_name)
     coll = db[collection_name]
   end
 
-  def getIndexInformation(namespace)
+  def get_index_information(namespace)
     if namespace.nil?
       return {}
     else
-      return getColl(namespace).index_information
+      return get_coll(namespace).index_information
     end
   end
 
@@ -303,7 +303,7 @@ in the array is not very selective.},
     return str
   end
 
-  def check_for_indexes query_hash, sort_hash, namespace
+  def check_for_indexes(query_hash, sort_hash, namespace)
     #classified_fields[FieldType][FieldName]
     classified_fields = Array.new(4) {[]}
     recommendation = []
@@ -336,7 +336,7 @@ in the array is not very selective.},
   #  Partial describes any value of fields covered value between None and Full.
   # -Order (ideal or not)
   #  describes whether the index is partially-ordered according to ideal index order: Equivalence > Sort > Range
-  def generate_index_report index, classified_fields, recommendation
+  def generate_index_report(index, classified_fields, recommendation)
     max_equal_cnt = classified_fields[EQUAL_TYPE].length
     max_sort_cnt = max_equal_cnt + classified_fields[SORT_TYPE].length
     max_range_cnt = max_sort_cnt + classified_fields[RANGE_TYPE].length
@@ -372,8 +372,8 @@ in the array is not very selective.},
 
   # Return false if the existing indexes is full coverage and in ideal order OR unsupported
   # otherwise return true.
-  def needs_recommendation? classified_fields, recommendation, namespace
-    indexes = getIndexInformation(namespace)
+  def needs_recommendation?(classified_fields, recommendation, namespace)
+    indexes = get_index_information(namespace)
     need = true
     if indexes != nil
       indexes.each do |_,index|
